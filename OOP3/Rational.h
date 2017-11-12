@@ -4,18 +4,20 @@
 
 class Rational {
 private:
-	int ch;
-	int zn;
-	int sign;
+	long long ch;
+	long long zn;
+	long long sign;
+	Rational reduction();
+	Rational reduction_(const long long &a, const long long &b);
+	long long gcd(long long a,long long b);
 public:
-	Rational() {};
-	Rational(int ch, int zn, int sign);
+	Rational();
+	Rational(const Rational& other);
+	Rational(long long ch, long long zn, int sign);
 	Rational operator +(const Rational& b);
 	Rational operator -(const Rational& b);
-	Rational operator *(const Rational& b)const;
+	Rational operator *(const Rational& b);
 	Rational operator /(const Rational& b);
-	void operator =(const Rational& b);
-
 	bool operator ==(const Rational& b);
 
 	friend std::istream& operator >> (std::istream& os, Rational& ans);

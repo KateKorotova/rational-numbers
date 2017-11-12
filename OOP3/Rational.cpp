@@ -1,49 +1,88 @@
 #include "Rational.h"
 
-Rational::Rational(int ch, int zn, int sign) {
+Rational::Rational(){
+	(*this).sign = 1;
+}
+Rational::Rational(const Rational& other) {
+	(*this).sign = other.sign;
+	(*this).ch = other.ch;
+	(*this).zn = other.zn;
+}
+
+
+Rational::Rational(long long ch, long long zn, int sign) {
 	(*this).zn = zn;
 	(*this).ch = ch; 
 	(*this).sign = sign;
 }
 
-void Rational::operator =(const Rational& b) {
-	(*this).sign = b.sign;
-	(*this).ch = b.ch;
-	(*this).zn = b.zn;
+long long Rational::gcd(long long a, long long b) {
+	while (a != 0 && b != 0) {
+		if (a > b)
+			a = a%b;
+		else
+			b = b%a;
+	}
+	return a + b;
 }
 
+Rational Rational::reduction() {
+	Rational ans = (*this);
+	long long g = gcd(ans.ch, ans.zn);
+	if (g != 1) {
+		ans.ch /= g;
+		ans.zn /= g;
+	}
+	return ans; 
+}
+Rational Rational::reduction_(const long long &a, const long long &b) {
+	Rational ans; 
+	ans.ch = a;
+	ans.zn = b;
+	long long g = gcd(a, b);
+	if (g != 1) {
+		ans.ch = a / g;
+		ans.zn = b / g;
+	}
+	return ans; 
+}
 
-Rational Rational::operator +(const Rational& b) {
+//Rational Rational::operator +(const Rational& b) {
+//	Rational res;
+//	if ((*this).sign == b.sign) {
+//		res.zn = gcd((*this).zn, b.zn);
+//		res.ch = (*this).ch*res.zn + b.ch*res.zn;
+//		res.sign = (*this).sign;
+//		res = res.reduction();
+//		return res;
+//	}
+//
+//}
+//Rational Rational::operator -(const Rational& b) {
+//	Rational res;
+//
+//}
 
+Rational Rational::operator *(const Rational& b) {
+	Rational res;
+	Rational f;
+	f = (*this);
+	Rational s;
+	s = b;
+	f = reduction_((*this).ch, b.zn);
+	s = reduction_(b.ch, (*this).zn);
+	res.ch = f.ch*s.ch;
+	res.zn = f.zn*s.zn;
+	res.sign = (*this).sign*b.sign;
+	res = res.reduction();
+	return res;
 }
-Rational Rational::operator -(const Rational& b) {
-	
-}
-Rational Rational::operator *(const Rational& b)const {
-	 
-}
-Rational Rational::operator /(const Rational& b) {
-
-}
+//Rational Rational::operator /(const Rational& b) {
+//
+//}
 
 bool Rational::operator ==(const Rational& b) {
-	if ((*this).zn == b.zn && (*this).ch == b.ch && (*this).sign == b.sign)
-		return true;
-	if (b.sign == (*this).sign) {
-		if (b.ch > (*this).ch) {
-			int del = b.ch / (*this).ch;
-			int del1 = b.zn / (*this).zn;
-			if (del == del1)
-				return true;
-		}
-		else {
-			int del = (*this).ch / b.ch;
-			int del1 = (*this).zn / b.zn;
-			if (del == del1)
-				return true;
-		}
-	}
-	return false;
+	return ((*this).zn == b.zn && (*this).ch == b.ch && (*this).sign == b.sign);
 }
 
 std::istream& operator >> (std::istream& os, Rational& ans) {
@@ -57,6 +96,7 @@ std::istream& operator >> (std::istream& os, Rational& ans) {
 		ans.sign = 1;
 	ans.ch = stoi(num.substr(0, num.find("/")));
 	ans.zn = stoi(num.substr(num.find("/")+1, num.length()-1));
+	ans = ans.reduction();
 	return os;
 }
 
@@ -81,7 +121,7 @@ int main() {
 		std::cout << "yes" << std::endl;
 	else
 		std::cout << "no" << std::endl;
-
+	std::cout << r1*r2 << std::endl;
 
 	std::system("pause");
 }
